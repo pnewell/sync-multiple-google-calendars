@@ -48,7 +48,7 @@ function submitRequest(requestBody, action){
       console.log(result);
     }
 
-    console.log(`${result.length} events ${action}d.`);
+    console.log(`${result.length} events ${action}.`);
   } else {
     console.log(`No events to ${action}.`);
   }
@@ -97,17 +97,12 @@ function syncEvents(startTime, endTime) {
     });
     submitRequest(requestBody_delete, "delete")
 
-
     // check if target event exists and update it if it does. if not, then create it.
-    requestBody_update = []
-    requestBody_create = []
-    let new_description = ""
-
     source_events.items.forEach((source_event) => {
       // Only consider events that are not "free".
       if (source_event.transparency !== 'transparent') {
 
-        const target_event = target_events.filter((candidate_event) => (candidate_event.iCalUID == source_event.iCalUID))[0];
+        const target_event = target_events.filter((candidate_event) => (candidate_event.iCalUID === source_event.iCalUID))[0];
         
         // if target event is found, update it. else create it.
         if (target_event) {
@@ -115,7 +110,7 @@ function syncEvents(startTime, endTime) {
             method: 'PUT',
             endpoint: `${ENDPOINT_BASE}/${CALENDAR_TO_MERGE_INTO}/events/${target_event.id}`,
             requestBody: {
-              summary: `${SEARCH_CHARACTER}${source_event.summary} ${calendarName}`,
+              summary: `${SEARCH_CHARACTER}${calendarName} ${source_event.summary}`,
               location: source_event.location,
               description: source_event.description,
               start: source_event.start,
@@ -127,7 +122,7 @@ function syncEvents(startTime, endTime) {
             method: 'POST',
             endpoint: `${ENDPOINT_BASE}/${CALENDAR_TO_MERGE_INTO}/events`,
             requestBody: {
-              summary: `${SEARCH_CHARACTER}${source_event.summary} ${calendarName}`,
+              summary: `${SEARCH_CHARACTER}${calendarName} ${source_event.summary}`,
               location: source_event.location,
               description: source_event.description,
               start: source_event.start,
